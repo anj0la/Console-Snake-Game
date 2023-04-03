@@ -71,6 +71,33 @@ node* dequeue(queue* a_queue) {
 } // dequeue
 
 /**
+Changes a cell in the snake.
+@param a_queue - the board containing the cell to change/update
+@param new_cell - the cell containing the new information to be updated in the snake
+*/
+void change_cells_in_queue(queue* a_queue, direction dir) {
+    node* temp = a_queue->front;
+    while (temp != NULL) {
+        switch (dir) {
+            case left:
+                temp->cell.col--;
+                break;
+            case right:
+                temp->cell.col++;
+                break;
+            case up:
+                temp->cell.row--;
+                break;
+            case down:
+                temp->cell.row++;
+                break;
+        } // switch
+        temp = temp->next;
+    } // while
+    free(temp);
+} // change_cells_in_queue
+
+/**
 Frees a queue from memory.
 @param a_queue - the queue to be removed from memory
 */

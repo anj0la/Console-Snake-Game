@@ -11,6 +11,7 @@
 #ifndef queue_h
 #define queue_h
 #include "cell.h"
+#include "direction.h"
 
 #define EMPTY_QUEUE 0
 
@@ -32,6 +33,7 @@ queue* create_queue();
 bool is_empty(queue* a_queue);
 void enqueue(queue* a_queue, cell* a_cell);
 node* dequeue(queue* a_queue);
+void change_cells_in_queue(queue* a_queue, direction dir);
 void free_queue(queue* a_queue);
 
 #endif

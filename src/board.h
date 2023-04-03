@@ -14,7 +14,7 @@
 #include "cell.h"
 
 // Constants
-#define BOARD_SIZE 15
+#define BOARD_SIZE 5
 
 // The board struct
 typedef struct board {
