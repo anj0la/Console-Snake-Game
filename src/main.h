@@ -18,6 +18,8 @@
 // Function definitions
 void print_snake_nodes(node* front);
 void update_board(queue* snake, board* game_board, direction dir);
+bool out_of_bounds(board* game_board);
+void handle_snake_out_of_bounds(queue* snake, board* game_board, direction dir);
 char get_input();
 void move_snake(queue* snake, board* game_board);
 void move_left(queue* snake, direction dir);

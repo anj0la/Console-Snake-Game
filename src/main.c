@@ -8,6 +8,8 @@
 */
 #include "main.h"
 
+bool game_over = false;
+
 /**
 The entry point of the application.
 */
@@ -22,9 +24,26 @@ int main(void) {
     enqueue(snake, create_cell(BOARD_SIZE / 2, BOARD_SIZE / 2, SNAKE)); // starts in middle of the board
     print_board(game_board);
 
-    // Playing the game
-    move_snake(snake, game_board);
-    print_board(game_board);
+
+    for (int i = 0; i < ; i++) {
+        move_snake(snake, game_board);
+        bool lost_game = out_of_bounds(game_board);
+        if (lost_game) {
+            printf("Uh oh! The snake has touched the end of the board!\n");
+            break;
+        }
+        print_board(game_board);
+    }
+
+    /* while (!game_over) {
+        move_snake(snake, game_board);
+        if (!out_of_bounds(game_board)) {
+            print_board(game_board);
+        } else {
+            game_over = true;
+        }
+    } // while  */
+    
 
     // Freeing all game objects
     free_queue(snake); 
@@ -75,6 +94,49 @@ void update_board(queue* snake, board* game_board, direction dir) {
     free(temp);
 } // update_board
 
+void handle_snake_out_of_bounds(queue* snake, board* game_board, direction dir) {
+    int snake_row = snake->front->cell.row; // 6
+    int snake_col = snake->front->cell.col; // -1
+    printf("Snake row: %d\n", snake_row);
+    printf("Snake col: %d\n", snake_col);
+    if ((snake_row < 0 && snake_row > BOARD_SIZE - 1) || (snake_col < 0 && snake_col > BOARD_SIZE - 1)) {
+        printf("OK!\n\n");
+        switch (dir) {
+            case left:
+                change_cell_in_board(game_board, create_cell(snake_row, snake_col, EMPTY));
+                print_board(game_board);
+                printf("\n\n");
+                break;
+            case right:
+                change_cell_in_board(game_board, create_cell(snake_row, --snake_col, EMPTY));
+                print_board(game_board);
+                printf("\n\n");
+                break;
+            case up:
+                change_cell_in_board(game_board, create_cell(snake_row, snake_col, EMPTY));
+                break;
+            case down:
+                change_cell_in_board(game_board, create_cell(snake_row, snake_col, EMPTY));
+                break;
+        } // switch
+    } // if
+} // handle_snake_out_of_bounds
+
+/**
+Checks whether the snake is out of bounds.
+This function can be made multithreaded.
+*/
+bool out_of_bounds(board* game_board) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) { 
+            if (game_board->cells[i][j]->type == SNAKE) {
+                return false;
+            } // if
+        } // inner for
+    } // outer for
+    return true;
+} // out_of_bounds
+
 /**
 Gets input from the user.
 @return - the input from the user
@@ -85,6 +147,7 @@ char get_input() {
     printf("Press L to move left, R to move right, U to move up, and D to move down.\n");
     fflush(stdout);
     scanf("%c", &user_input);
+    fflush(stdin);
     return toupper(user_input);
 } // get_input
 
@@ -98,23 +161,27 @@ void move_snake(queue* snake, board* game_board) {
     switch (input) {
         case 'L':
             move_left(snake, left); // works
-            //printf("X pos: %d, Y pos: %d\n", snake->front->cell.row, snake->front->cell.col);
-            update_board(snake, game_board, left); // doesn't work
+            printf("X pos: %d, Y pos: %d\n", snake->front->cell.row, snake->front->cell.col);
+            update_board(snake, game_board, left);
+            handle_snake_out_of_bounds(snake, game_board, left);
             break;
         case 'R':
             move_right(snake, right); 
             //printf("X pos: %d, Y pos: %d\n", snake->front->cell.row, snake->front->cell.col);
-            update_board(snake, game_board, right);            
+            update_board(snake, game_board, right);  
+            handle_snake_out_of_bounds(snake, game_board, right);          
             break;
         case 'U':
             move_up(snake, up);
             //printf("X pos: %d, Y pos: %d\n", snake->front->cell.row, snake->front->cell.col);
             update_board(snake, game_board, up);
+            handle_snake_out_of_bounds(snake, game_board, up);          
             break;
         case 'D':
             move_down(snake, down);
             //printf("X pos: %d, Y pos: %d\n", snake->front->cell.row, snake->front->cell.col);
             update_board(snake, game_board, down);
+            handle_snake_out_of_bounds(snake, game_board, down);          
             break;
     } // switch
 } // move_snake
